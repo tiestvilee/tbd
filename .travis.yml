@@ -1,0 +1,44 @@
+language: python
+services:
+- docker
+python:
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
+- '3.6'
+- pypy-5.3.1
+env: LIBGIT2=~/libgit2/_install/ LD_LIBRARY_PATH=~/libgit2/_install/lib
+before_install: ./.travis.sh
+install: pip install -r requirements.txt .
+before_script:
+- git config --global user.name "travis-test"
+- git config --global user.email "travis@test.com"
+script:
+- nosetests --logging-level=WARN
+- nosetests gitless/tests/test_e2e.py --logging-level=WARN
+branches:
+  only:
+  - master
+  - develop
+sudo: required
+jobs:
+  include:
+  - stage: Pack snap
+    env: EMPTY
+    before_install: skip
+    install: skip
+    script: >
+      docker run -v $(pwd):$(pwd) -w $(pwd) snapcore/snapcraft:stable sh -c "apt-get
+      update && snapcraft"
+    after_success:
+    - openssl aes-256-cbc -K $encrypted_8b01c2e263fa_key -iv $encrypted_8b01c2e263fa_iv
+      -in .snapcraft/travis_snapcraft.cfg -out .snapcraft/snapcraft.cfg -d
+    deploy:
+      on:
+        branch: master
+      provider: script
+      script: >
+        docker run -v $(pwd):$(pwd) -w $(pwd) snapcore/snapcraft:stable sh -c "apt-get
+        update && snapcraft && snapcraft push *.snap --release edge"
+      skip_cleanup: true
