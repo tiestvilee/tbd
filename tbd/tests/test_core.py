@@ -181,9 +181,9 @@ class TestFileTrack(TestFile):
       self.curr_b.track_file(fp)
       st = self.curr_b.status_file(fp)
       self.assertEqual(
-          core.GL_STATUS_TRACKED, st.type,
+          core.TBD_STATUS_TRACKED, st.type,
           'Track of fp "{0}" failed: expected status.type={1}, got '
-          'status.type={2}'.format(fp, core.GL_STATUS_TRACKED, st.type))
+          'status.type={2}'.format(fp, core.TBD_STATUS_TRACKED, st.type))
 
   @assert_contents_unchanged(
       UNTRACKED_FP, UNTRACKED_FP_WITH_SPACE,
@@ -269,9 +269,9 @@ class TestFileUntrack(TestFile):
       self.curr_b.untrack_file(fp)
       st = self.curr_b.status_file(fp)
       self.assertEqual(
-          core.GL_STATUS_UNTRACKED, st.type,
+          core.TBD_STATUS_UNTRACKED, st.type,
           'Untrack of fp "{0}" failed: expected status.type={1}, got '
-          'status.type={2}'.format(fp, core.GL_STATUS_UNTRACKED, st.type))
+          'status.type={2}'.format(fp, core.TBD_STATUS_UNTRACKED, st.type))
 
   @assert_contents_unchanged(
       TRACKED_FP, TRACKED_FP_WITH_SPACE,
@@ -439,11 +439,11 @@ class TestFileStatus(TestFile):
             fp == UNTRACKED_DIR_FP or fp == UNTRACKED_DIR_FP_WITH_SPACE or
             fp == UNTRACKED_DIR_DIR_FP or
             fp == UNTRACKED_DIR_DIR_FP_WITH_SPACE):
-        self.__assert_type(fp, core.GL_STATUS_UNTRACKED, f_type)
+        self.__assert_type(fp, core.TBD_STATUS_UNTRACKED, f_type)
         self.__assert_field(fp, 'exists_at_head', False, exists_at_head)
         self.__assert_field(fp, 'modified', True, modified)
       elif fp == '.gitignore':
-        self.__assert_type(fp, core.GL_STATUS_UNTRACKED, f_type)
+        self.__assert_type(fp, core.TBD_STATUS_UNTRACKED, f_type)
         self.__assert_field(fp, 'exists_at_head', False, exists_at_head)
         self.__assert_field(fp, 'modified', True, modified)
       self.__assert_field(fp, 'exists_in_wd', True, exists_in_wd)
@@ -468,14 +468,14 @@ class TestFileStatus(TestFile):
   def test_status_rm(self):
     os.remove(TRACKED_FP)
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_TRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_TRACKED, st.type)
     self.assertTrue(st.modified)
     self.assertTrue(st.exists_at_head)
     self.assertFalse(st.exists_in_wd)
 
     utils_lib.write_file(TRACKED_FP, contents=TRACKED_FP_CONTENTS_2)
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_TRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_TRACKED, st.type)
     self.assertFalse(st.modified)
     self.assertTrue(st.exists_at_head)
     self.assertTrue(st.exists_in_wd)
@@ -483,7 +483,7 @@ class TestFileStatus(TestFile):
   def test_status_track_rm(self):
     self.curr_b.track_file(UNTRACKED_FP)
     st = self.curr_b.status_file(UNTRACKED_FP)
-    self.assertEqual(core.GL_STATUS_TRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_TRACKED, st.type)
     self.assertTrue(st.modified)
 
     os.remove(UNTRACKED_FP)
@@ -492,48 +492,48 @@ class TestFileStatus(TestFile):
   def test_status_track_untrack(self):
     self.curr_b.track_file(UNTRACKED_FP)
     st = self.curr_b.status_file(UNTRACKED_FP)
-    self.assertEqual(core.GL_STATUS_TRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_TRACKED, st.type)
     self.assertTrue(st.modified)
 
     self.curr_b.untrack_file(UNTRACKED_FP)
     st = self.curr_b.status_file(UNTRACKED_FP)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
     self.assertTrue(st.modified)
 
   def test_status_unignore(self):
     utils_lib.write_file('.gitignore', contents='')
     st = self.curr_b.status_file(IGNORED_FP)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
 
     st = self.curr_b.status_file(IGNORED_FP_WITH_SPACE)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
 
   def test_status_ignore(self):
     contents = utils_lib.read_file('.gitignore') + '\n' + TRACKED_FP
     utils_lib.write_file('.gitignore', contents=contents)
     # Tracked files can't be ignored
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_TRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_TRACKED, st.type)
 
   def test_status_untrack_tracked_modify(self):
     self.curr_b.untrack_file(TRACKED_FP)
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
     # self.assertFalse(st.modified)
 
     utils_lib.write_file(TRACKED_FP, contents='contents')
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
     self.assertTrue(st.modified)
 
   def test_status_untrack_tracked_rm(self):
     self.curr_b.untrack_file(TRACKED_FP)
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
 
     os.remove(TRACKED_FP)
     st = self.curr_b.status_file(TRACKED_FP)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
     self.assertTrue(st.modified)
     self.assertFalse(st.exists_in_wd)
     self.assertTrue(st.exists_at_head)
@@ -542,13 +542,13 @@ class TestFileStatus(TestFile):
     """Assert that ignoring a tracked file has no effect."""
     utils_lib.append_to_file('.gitignore', contents='\n' + TRACKED_FP + '\n')
     st = self.curr_b.status_file(TRACKED_FP)
-    self.__assert_type(TRACKED_FP, core.GL_STATUS_TRACKED, st.type)
+    self.__assert_type(TRACKED_FP, core.TBD_STATUS_TRACKED, st.type)
 
   def test_status_ignore_untracked(self):
     """Assert that ignoring a untracked file makes it ignored."""
     utils_lib.append_to_file('.gitignore', contents='\n' + UNTRACKED_FP + '\n')
     st = self.curr_b.status_file(UNTRACKED_FP)
-    self.__assert_type(UNTRACKED_FP, core.GL_STATUS_IGNORED, st.type)
+    self.__assert_type(UNTRACKED_FP, core.TBD_STATUS_IGNORED, st.type)
 
   def __assert_type(self, fp, expected, got):
     self.assertEqual(
@@ -852,11 +852,11 @@ class TestBranchSwitch(TestBranch):
     self.repo.switch_current_branch(self.repo.lookup_branch(BRANCH))
     st = self.curr_b.status_file(TRACKED_FP)
     self.assertTrue(st)
-    self.assertEqual(core.GL_STATUS_TRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_TRACKED, st.type)
     self.repo.switch_current_branch(self.repo.lookup_branch('master'))
     st = self.curr_b.status_file(TRACKED_FP)
     self.assertTrue(st)
-    self.assertEqual(core.GL_STATUS_UNTRACKED, st.type)
+    self.assertEqual(core.TBD_STATUS_UNTRACKED, st.type)
 
   def test_switch_with_hidden_files(self):
     hf = '.file'
@@ -953,7 +953,7 @@ class TestRemoteSync(TestRemote):
 
     current_b = self.repo.current_branch
     # It is not a ff so it should fail
-    self.assertRaises(core.GlError, current_b.publish, remote_branch)
+    self.assertRaises(core.TbdError, current_b.publish, remote_branch)
     # Get the changes
     git.rebase(remote_branch)
     # Retry (this time it should work)
